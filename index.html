@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kristina Angreani — Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;600;700&family=Noto+Sans+SC:wght@300;400;700&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+<style>
+:root {
+  --pink-light: #fde8f0;
+  --pink-mid: #f9b8d2;
+  --pink-strong: #e8749a;
+  --pink-deep: #c94f7a;
+  --green-light: #d6f0dc;
+  --green-mid: #7bc98a;
+  --green-deep: #3d8a50;
+  --choco: #7d5137;
+  --choco-light: #c49a72;
+  --cream: #fff9f5;
+  --text-dark: #3a2030;
+  --text-mid: #7a5060;
+  --font-main: 'Comfortaa', cursive;
+  --font-cn: 'Noto Sans SC', sans-serif;
+  --font-display: 'Playfair Display', serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-main);
+  background: var(--cream);
+  color: var(--text-dark);
+  overflow-x: hidden;
+}
+
+/* ─── LOADING SCREEN ─── */
+#loader {
+  position: fixed; inset: 0; z-index: 9999;
+  background: linear-gradient(160deg, #ffe0ef 0%, #fff0f5 40%, #e8f7ea 100%);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 24px;
+}
+#loader-text {
+  font-family: var(--font-main);
+  font-size: 1.1rem;
+  color: var(--pink-deep);
+  letter-spacing: 0.05em;
+  opacity: 0.85;
+}
+#track {
+  width: 320px; height: 60px;
+  position: relative;
+  background: rgba(255,255,255,0.6);
+  border-radius: 40px;
+  border: 2.5px solid var(--pink-mid);
+  overflow: hidden;
+}
+#progress-fill {
+  position: absolute; left: 0; top: 0; height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--pink-mid), var(--pink-strong));
+  border-radius: 40px;
+  transition: width 0.1s linear;
+}
+#bunny-wrap {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  left: 4px;
+  z-index: 2;
+  width: 54px; height: 54px;
+}
+.bunny-svg { width: 54px; height: 54px; }
+
+/* Carrot sits at right */
+#carrot-wrap {
+  position: absolute; right: 6px; top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  width: 36px; height: 36px;
+  animation: carrotBounce 0.6s ease-in-out infinite alternate;
+}
+@keyframes carrotBounce { from{transform:translateY(-55%)} to{transform:translateY(-45%)} }
+
+/* bunny hop */
+@keyframes hop {
+  0%   { transform: translateY(-50%) scaleY(1); }
+  25%  { transform: translateY(-80%) scaleY(1.05); }
+  50%  { transform: translateY(-50%) scaleY(0.95); }
+  75%  { transform: translateY(-70%) scaleY(1.05); }
+  100% { transform: translateY(-50%) scaleY(1); }
+}
+#bunny-wrap { animation: hop 0.45s ease-in-out infinite; }
+
+/* ─── FLOATING PETALS ─── */
+.petal-container {
+  position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden;
+}
+.petal {
+  position: absolute; top: -30px;
+  animation: petalFall linear infinite;
+  opacity: 0.7;
+}
+@keyframes petalFall {
+  0%   { transform: translateY(-40px) rotate(0deg) translateX(0); opacity:0.8; }
+  100% { transform: translateY(110vh) rotate(720deg) translateX(40px); opacity:0; }
+}
+
+/* ─── NAV ─── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 48px;
+  background: rgba(255, 240, 248, 0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1.5px solid rgba(249, 184, 210, 0.4);
+  transition: all 0.3s;
+}
+.nav-logo {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  color: var(--pink-deep);
+  display: flex; align-items: center; gap: 8px;
+}
+.nav-logo svg { width: 28px; height: 28px; }
+
+@media (max-width: 680px) {
+  .nav-logo {
+    margin-top: 10px;
+    justify-content: center;
+    text-align: center;
+  }
+}
+
+.nav-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border: 1.5px solid rgba(249, 184, 210, 0.7);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.72);
+  color: var(--pink-deep);
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, transform 0.2s;
+}
+.nav-toggle:hover {
+  background: white;
+  border-color: var(--pink-strong);
+}
+.nav-toggle:focus-visible {
+  outline: 3px solid rgba(232, 116, 154, 0.25);
+  outline-offset: 3px;
+}
+.nav-toggle svg {
+  width: 22px;
+  height: 22px;
+}
+.nav-menu {
+  display: flex;
+}
+nav ul {
+  list-style: none;
+  display: flex; gap: 32px;
+}
+nav a {
+  text-decoration: none;
+  color: var(--text-mid);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  transition: color 0.2s;
+  position: relative;
+}
+nav a::after {
+  content: '';
+  position: absolute; bottom: -3px; left: 0; right: 0; height: 2px;
+  background: var(--pink-strong);
+  transform: scaleX(0);
+  transition: transform 0.2s;
+  border-radius: 2px;
+}
+nav a:hover { color: var(--pink-strong); }
+nav a:hover::after { transform: scaleX(1); }
+
+/* ─── HERO ─── */
+#hero {
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column;
+  text-align: center;
+  padding: 120px 24px 60px;
+  position: relative;
+  background: linear-gradient(160deg, #fff0f7 0%, #fff9f5 50%, #edf9ef 100%);
+  overflow: hidden;
+}
+.hero-leaf-bg {
+  position: absolute; inset: 0; pointer-events: none;
+  background-image:
+    radial-gradient(circle at 10% 20%, rgba(123,201,138,0.12) 0%, transparent 40%),
+    radial-gradient(circle at 90% 80%, rgba(249,184,210,0.18) 0%, transparent 40%),
+    radial-gradient(circle at 50% 50%, rgba(255,240,248,0) 0%, transparent 60%);
+}
+.hero-tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(249,184,210,0.3);
+  border: 1.5px solid var(--pink-mid);
+  color: var(--pink-deep);
+  border-radius: 40px;
+  padding: 6px 18px;
+  font-size: 0.78rem; font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+.hero-name {
+  font-family: var(--font-display);
+  font-size: clamp(2.8rem, 7vw, 5.5rem);
+  color: var(--text-dark);
+  line-height: 1.1;
+  margin-bottom: 12px;
+}
+.hero-name span { color: var(--pink-deep); font-style: italic; }
+.hero-cn {
+  font-family: var(--font-cn);
+  font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+  color: var(--green-deep);
+  margin-bottom: 20px;
+  position: relative;
+  display: inline-block;
+}
+.hero-cn::before, .hero-cn::after {
+  content: '🌿';
+  margin: 0 10px;
+}
+.hero-subtitle {
+  font-size: 1rem;
+  color: var(--text-mid);
+  max-width: 480px;
+  line-height: 1.7;
+  margin-bottom: 36px;
+}
+.btn-primary {
+  display: inline-block;
+  background: linear-gradient(135deg, var(--pink-strong), var(--pink-deep));
+  color: white;
+  padding: 14px 36px;
+  border-radius: 40px;
+  font-family: var(--font-main);
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-decoration: none;
+  letter-spacing: 0.04em;
+  box-shadow: 0 6px 24px rgba(201,79,122,0.3);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.btn-primary:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(201,79,122,0.4); }
+
+/* bunny decoration in hero */
+.hero-bunny {
+  position: absolute; bottom: 30px; right: 60px;
+  width: 90px; opacity: 0.5;
+  animation: gentleBounce 2s ease-in-out infinite;
+}
+@keyframes gentleBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+/* ─── SECTIONS ─── */
+section { padding: 96px 24px; position: relative; }
+.section-inner { max-width: 900px; margin: 0 auto; }
+.section-label {
+  font-size: 0.75rem; font-weight: 700;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--green-deep);
+  margin-bottom: 12px;
+  display: flex; align-items: center; gap: 8px;
+}
+.section-label::before { content: ''; display: inline-block; width: 28px; height: 2px; background: var(--green-mid); border-radius: 2px; }
+.section-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  color: var(--text-dark);
+  margin-bottom: 40px;
+  line-height: 1.2;
+}
+.section-title em { color: var(--pink-deep); font-style: italic; }
+
+/* ─── ABOUT ─── */
+#about { background: #fff; }
+.about-grid {
+  display: grid; grid-template-columns: 1fr 1.4fr;
+  gap: 60px; align-items: center;
+}
+.about-avatar {
+  position: relative;
+  display: flex; align-items: center; justify-content: center;
+}
+.avatar-bg {
+  width: 240px; height: 240px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--pink-light), var(--green-light));
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+  box-shadow: 0 10px 40px rgba(249,184,210,0.5);
+}
+.avatar-bg svg { width: 160px; height: 160px; }
+.avatar-badge {
+  position: absolute; bottom: 8px; right: -12px;
+  background: var(--pink-strong);
+  color: white;
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 0.75rem; font-weight: 700;
+  white-space: nowrap;
+  box-shadow: 0 4px 14px rgba(201,79,122,0.35);
+}
+.about-text p {
+  color: var(--text-mid);
+  line-height: 1.85;
+  font-size: 0.95rem;
+  margin-bottom: 16px;
+}
+.about-flags {
+  display: flex; gap: 12px; flex-wrap: wrap; margin-top: 20px;
+}
+.flag-chip {
+  display: flex; align-items: center; gap: 6px;
+  background: var(--pink-light);
+  border: 1.5px solid var(--pink-mid);
+  border-radius: 20px;
+  padding: 5px 14px;
+  font-size: 0.78rem; font-weight: 600;
+  color: var(--pink-deep);
+}
+
+/* ─── SKILLS ─── */
+#skills {
+  background: linear-gradient(160deg, #fff5f9 0%, #f0faf2 100%);
+}
+.skills-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 24px;
+}
+.skill-card {
+  background: white;
+  border-radius: 20px;
+  padding: 28px 24px;
+  box-shadow: 0 4px 20px rgba(200,150,170,0.1);
+  border: 1.5px solid transparent;
+  transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+  position: relative; overflow: hidden;
+}
+.skill-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 4px;
+}
+.skill-card.mandarin::before { background: linear-gradient(90deg, var(--green-mid), var(--green-deep)); }
+.skill-card.baking::before  { background: linear-gradient(90deg, var(--choco-light), var(--choco)); }
+.skill-card.service::before { background: linear-gradient(90deg, var(--pink-mid), var(--pink-strong)); }
+.skill-card.kitchen::before { background: linear-gradient(90deg, #b0d890, var(--green-mid)); }
+
+.skill-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 36px rgba(200,150,170,0.18);
+  border-color: var(--pink-mid);
+}
+.skill-icon { font-size: 2.2rem; margin-bottom: 14px; }
+.skill-name {
+  font-weight: 700; font-size: 1rem;
+  margin-bottom: 8px; color: var(--text-dark);
+}
+.skill-cn {
+  font-family: var(--font-cn);
+  font-size: 0.85rem;
+  color: var(--green-deep);
+  background: linear-gradient(90deg, var(--green-light), #d0f0d0);
+  border-radius: 8px;
+  padding: 4px 10px;
+  display: inline-block;
+  margin-bottom: 10px;
+  border-left: 3px solid var(--green-mid);
+  position: relative;
+}
+.skill-cn::before { content: '🍃'; font-size: 0.7rem; margin-right: 4px; }
+.skill-desc { font-size: 0.82rem; color: var(--text-mid); line-height: 1.6; }
+
+/* cert badge */
+.cert-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: linear-gradient(135deg, var(--green-light), #c0eec8);
+  border: 1.5px solid var(--green-mid);
+  border-radius: 12px;
+  padding: 4px 12px;
+  font-size: 0.72rem; font-weight: 700;
+  color: var(--green-deep);
+  margin-top: 8px;
+}
+
+/* ─── EXPERIENCE ─── */
+#experience { background: white; }
+.exp-timeline { position: relative; }
+.exp-timeline::before {
+  content: '';
+  position: absolute; left: 22px; top: 0; bottom: 0;
+  width: 2px;
+  background: linear-gradient(to bottom, var(--pink-mid), var(--green-mid));
+  border-radius: 2px;
+}
+.exp-item {
+  display: flex; gap: 30px;
+  margin-bottom: 44px;
+  position: relative;
+}
+.exp-dot {
+  width: 46px; height: 46px; min-width: 46px;
+  border-radius: 50%;
+  background: white;
+  border: 2.5px solid var(--pink-mid);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.3rem;
+  position: relative; z-index: 1;
+  box-shadow: 0 3px 12px rgba(249,184,210,0.4);
+  transition: transform 0.2s;
+}
+.exp-item:hover .exp-dot { transform: scale(1.15); border-color: var(--pink-strong); }
+.exp-card {
+  flex: 1;
+  background: var(--cream);
+  border-radius: 16px;
+  padding: 22px 24px;
+  border: 1.5px solid rgba(249,184,210,0.3);
+  transition: box-shadow 0.25s;
+}
+.exp-card:hover { box-shadow: 0 8px 28px rgba(200,150,170,0.15); }
+.exp-title { font-weight: 700; font-size: 1rem; color: var(--text-dark); margin-bottom: 4px; }
+.exp-place { font-size: 0.82rem; color: var(--pink-strong); font-weight: 600; margin-bottom: 10px; }
+.exp-desc { font-size: 0.85rem; color: var(--text-mid); line-height: 1.7; }
+
+/* ─── EDUCATION ─── */
+#education {
+  background: linear-gradient(160deg, #fff0f6 0%, #edf9f0 100%);
+}
+.edu-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; }
+.edu-card {
+  background: white;
+  border-radius: 20px;
+  padding: 28px 24px;
+  border: 2px solid var(--pink-light);
+  position: relative; overflow: hidden;
+  transition: transform 0.25s, box-shadow 0.25s;
+}
+.edu-card:hover { transform: translateY(-5px); box-shadow: 0 10px 32px rgba(200,150,170,0.15); }
+.edu-ribbon {
+  position: absolute; top: 16px; right: -28px;
+  background: var(--green-mid);
+  color: white;
+  font-size: 0.65rem; font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 5px 36px;
+  transform: rotate(45deg);
+}
+.edu-icon { font-size: 2.4rem; margin-bottom: 14px; }
+.edu-school { font-weight: 700; font-size: 1rem; color: var(--text-dark); margin-bottom: 4px; }
+.edu-detail { font-size: 0.82rem; color: var(--text-mid); line-height: 1.6; }
+.edu-cn {
+  font-family: var(--font-cn);
+  font-size: 1rem;
+  color: var(--green-deep);
+  margin-top: 10px;
+  padding: 6px 12px;
+  background: linear-gradient(90deg, var(--green-light), #e0f5e3);
+  border-radius: 8px;
+  display: inline-block;
+  border-left: 3px solid var(--green-mid);
+}
+
+/* ─── MANDARIN HIGHLIGHT ─── */
+#mandarin-section {
+  background: linear-gradient(135deg, #1c3a24 0%, #2d5c38 50%, #1a4a28 100%);
+  padding: 80px 24px;
+  position: relative; overflow: hidden;
+  text-align: center;
+}
+#mandarin-section::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+.mandarin-inner { max-width: 700px; margin: 0 auto; position: relative; z-index: 1; }
+.mandarin-label {
+  font-size: 0.72rem; font-weight: 700; letter-spacing: 0.2em;
+  color: var(--green-mid); text-transform: uppercase; margin-bottom: 20px;
+}
+.mandarin-big {
+  font-family: var(--font-cn);
+  font-size: clamp(3rem, 10vw, 6rem);
+  color: white;
+  line-height: 1.1;
+  margin-bottom: 16px;
+  text-shadow: 0 0 60px rgba(123,201,138,0.4);
+}
+.mandarin-pinyin {
+  font-size: 1rem; color: rgba(255,255,255,0.6);
+  margin-bottom: 28px; letter-spacing: 0.1em;
+}
+.mandarin-desc {
+  font-size: 0.9rem; color: rgba(255,255,255,0.75);
+  line-height: 1.8; max-width: 500px; margin: 0 auto 28px;
+}
+.cert-chips { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.cert-chip {
+  background: rgba(255,255,255,0.1);
+  border: 1.5px solid rgba(255,255,255,0.25);
+  border-radius: 20px;
+  padding: 7px 20px;
+  font-size: 0.8rem; color: white; font-weight: 600;
+}
+.cert-chip.highlight {
+  background: var(--green-mid);
+  border-color: var(--green-mid);
+  color: white;
+}
+/* floating leaves in mandarin section */
+.leaf-float {
+  position: absolute;
+  animation: leafSway linear infinite;
+  opacity: 0.15;
+}
+@keyframes leafSway {
+  0%   { transform: translateY(0) rotate(0deg); }
+  50%  { transform: translateY(-20px) rotate(15deg); }
+  100% { transform: translateY(0) rotate(0deg); }
+}
+
+/* ─── CONTACT ─── */
+#contact { background: white; }
+.contact-card {
+  background: linear-gradient(135deg, var(--pink-light) 0%, var(--green-light) 100%);
+  border-radius: 28px;
+  padding: 52px 48px;
+  text-align: center;
+  position: relative; overflow: hidden;
+  border: 2px solid rgba(249,184,210,0.4);
+}
+.contact-card h3 {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  color: var(--text-dark);
+  margin-bottom: 12px;
+}
+.contact-card p { color: var(--text-mid); margin-bottom: 32px; font-size: 0.9rem; line-height: 1.7; }
+.contact-links { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+.contact-link {
+  display: flex; align-items: center; gap: 8px;
+  background: white;
+  border: 1.5px solid rgba(249,184,210,0.5);
+  border-radius: 14px;
+  padding: 12px 22px;
+  font-size: 0.85rem; font-weight: 600;
+  color: var(--text-dark);
+  text-decoration: none;
+  transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+}
+.contact-link:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(200,150,170,0.2);
+  background: var(--pink-light);
+}
+.contact-bunny {
+  position: absolute; bottom: 20px; right: 30px;
+  font-size: 2.5rem;
+  animation: gentleBounce 1.8s ease-in-out infinite;
+}
+
+/* ─── FOOTER ─── */
+footer {
+  text-align: center;
+  padding: 32px 24px;
+  background: var(--text-dark);
+  color: rgba(255,255,255,0.5);
+  font-size: 0.78rem;
+}
+footer span { color: var(--pink-mid); }
+
+/* ─── SCROLL REVEAL ─── */
+.reveal { opacity: 1; }
+
+/* ─── DECORATIVE LEAVES SVG ─── */
+.deco-leaf {
+  position: absolute; pointer-events: none; opacity: 0.12;
+}
+
+/* ─── TWEAKS PANEL ─── */
+#tweaks-panel {
+  display: none;
+  position: fixed; bottom: 28px; right: 28px; z-index: 200;
+  background: white;
+  border-radius: 20px;
+  padding: 20px 22px;
+  width: 240px;
+  box-shadow: 0 10px 40px rgba(100,50,80,0.18);
+  border: 1.5px solid var(--pink-mid);
+  font-size: 0.82rem;
+}
+#tweaks-panel h4 {
+  font-weight: 700; margin-bottom: 14px;
+  color: var(--pink-deep);
+  font-size: 0.9rem;
+}
+.tweak-row { margin-bottom: 12px; }
+.tweak-row label { display: block; color: var(--text-mid); margin-bottom: 4px; font-weight: 600; }
+.tweak-row input[type=range] { width: 100%; accent-color: var(--pink-strong); }
+.tweak-row input[type=color] { width: 36px; height: 26px; border: none; cursor: pointer; border-radius: 6px; }
+.tweak-row select { width: 100%; padding: 5px 8px; border-radius: 8px; border: 1.5px solid var(--pink-mid); font-family: var(--font-main); font-size: 0.8rem; color: var(--text-dark); }
+
+@media (max-width: 680px) {
+  .about-grid { grid-template-columns: 1fr; }
+  .about-avatar { margin-bottom: 20px; }
+  nav {
+    padding: 14px 20px;
+    align-items: flex-start;
+  }
+  .nav-toggle {
+    display: inline-flex;
+  }
+  .nav-menu {
+    position: absolute;
+    top: calc(100% + 12px);
+    left: 20px;
+    right: 20px;
+    display: block;
+    background: rgba(255, 249, 245, 0.96);
+    backdrop-filter: blur(16px);
+    border: 1.5px solid rgba(249, 184, 210, 0.55);
+    border-radius: 22px;
+    box-shadow: 0 14px 36px rgba(122, 80, 96, 0.16);
+    padding: 8px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s ease;
+  }
+  nav.nav-open .nav-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+  nav ul {
+    gap: 0;
+    flex-direction: column;
+  }
+  nav li + li {
+    border-top: 1px solid rgba(249, 184, 210, 0.22);
+  }
+  nav a {
+    display: block;
+    padding: 14px 16px;
+    font-size: 0.92rem;
+  }
+  nav a::after {
+    display: none;
+  }
+  .contact-card { padding: 36px 24px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── LOADING SCREEN ── -->
+<div id="loader">
+  <div style="font-family:'Comfortaa',cursive;font-size:1.6rem;font-weight:700;color:#c94f7a;margin-bottom:6px;">
+    Kristina Angreani 🌸
+  </div>
+  <div id="loader-text">Loading something sweet...</div>
+  <div id="track">
+    <div id="progress-fill"></div>
+    <!-- bunny SVG -->
+    <div id="bunny-wrap">
+      <svg class="bunny-svg" viewBox="0 0 54 54" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- ears -->
+        <ellipse cx="18" cy="14" rx="5" ry="10" fill="#f9b8d2"/>
+        <ellipse cx="18" cy="14" rx="2.5" ry="7" fill="#f48fb1"/>
+        <ellipse cx="32" cy="12" rx="5" ry="10" fill="#f9b8d2"/>
+        <ellipse cx="32" cy="12" rx="2.5" ry="7" fill="#f48fb1"/>
+        <!-- head -->
+        <ellipse cx="25" cy="26" rx="13" ry="12" fill="#fde8f0"/>
+        <!-- eyes -->
+        <circle cx="21" cy="24" r="2.5" fill="#c94f7a"/>
+        <circle cx="21.8" cy="23.2" r="0.8" fill="white"/>
+        <circle cx="29" cy="24" r="2.5" fill="#c94f7a"/>
+        <circle cx="29.8" cy="23.2" r="0.8" fill="white"/>
+        <!-- nose -->
+        <ellipse cx="25" cy="28" rx="2" ry="1.2" fill="#f06292"/>
+        <!-- whiskers -->
+        <line x1="12" y1="27" x2="22" y2="28" stroke="#f9b8d2" stroke-width="0.8"/>
+        <line x1="12" y1="29" x2="22" y2="29" stroke="#f9b8d2" stroke-width="0.8"/>
+        <line x1="38" y1="27" x2="28" y2="28" stroke="#f9b8d2" stroke-width="0.8"/>
+        <line x1="38" y1="29" x2="28" y2="29" stroke="#f9b8d2" stroke-width="0.8"/>
+        <!-- body -->
+        <ellipse cx="25" cy="41" rx="11" ry="9" fill="#fde8f0"/>
+        <!-- tail -->
+        <circle cx="36" cy="44" r="4" fill="white"/>
+        <!-- feet -->
+        <ellipse cx="18" cy="50" rx="6" ry="3" fill="#f9b8d2"/>
+        <ellipse cx="31" cy="50" rx="6" ry="3" fill="#f9b8d2"/>
+      </svg>
+    </div>
+    <!-- carrot SVG -->
+    <div id="carrot-wrap">
+      <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M18 32 C14 28 8 20 10 12 C12 6 22 4 26 10 C30 16 24 28 18 32Z" fill="#ff8c42"/>
+        <path d="M16 8 C12 2 8 0 14 4" stroke="#5da832" stroke-width="2" stroke-linecap="round" fill="none"/>
+        <path d="M18 6 C18 0 16 -2 18 2" stroke="#5da832" stroke-width="2" stroke-linecap="round" fill="none"/>
+        <path d="M20 8 C24 2 28 0 22 4" stroke="#5da832" stroke-width="2" stroke-linecap="round" fill="none"/>
+      </svg>
+    </div>
+  </div>
+  <div style="color:#b0b0b0;font-size:0.75rem;margin-top:4px;">
+    🐰 bunny is running for the carrot!
+  </div>
+</div>
+
+<!-- ── FLOATING PETALS ── -->
+<div class="petal-container" id="petals"></div>
+
+<!-- ── NAV ── -->
+<nav>
+  <div class="nav-logo">
+    <svg viewBox="0 0 28 28" fill="none">
+      <path d="M14 4 C8 4 4 9 5 15 C6 20 10 23 14 24 C18 23 22 20 23 15 C24 9 20 4 14 4Z" fill="#7bc98a" opacity="0.8"/>
+      <path d="M14 24 C14 18 14 12 14 6" stroke="#3d8a50" stroke-width="1.5" stroke-linecap="round"/>
+      <path d="M14 16 C11 13 8 12 10 10" stroke="#3d8a50" stroke-width="1.2" stroke-linecap="round"/>
+      <path d="M14 20 C17 17 20 16 18 14" stroke="#3d8a50" stroke-width="1.2" stroke-linecap="round"/>
+    </svg>
+    Kristina
+  </div>
+  <button class="nav-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false" aria-controls="nav-menu">
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M4 7H20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      <path d="M4 12H20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      <path d="M4 17H20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+  </button>
+  <div class="nav-menu" id="nav-menu">
+    <ul>
+      <li><a href="#about">About</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#education">Education</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ── HERO ── -->
+<section id="hero">
+  <div class="hero-leaf-bg"></div>
+  <div class="hero-tag reveal">
+    🌸 Available Now — Actively Looking for Work
+  </div>
+  <h1 class="hero-name reveal">
+    Hi, I'm <span>Kristina</span>
+  </h1>
+  <div class="hero-cn reveal">你好，我是 Kristina！</div>
+  <p class="hero-subtitle reveal">
+    Vocational high school graduate from Taiwan 🇹🇼 — experienced in hospitality & bakery. Hardworking, fast learner, and ready to bring her best to a new team!
+  </p>
+  <a href="#contact" class="btn-primary reveal">Get in Touch 💌</a>
+  <!-- decorative bunny -->
+  <div class="hero-bunny">
+    <svg viewBox="0 0 90 90" fill="none">
+      <ellipse cx="28" cy="22" rx="7" ry="14" fill="#fde8f0" opacity="0.7"/>
+      <ellipse cx="28" cy="22" rx="3.5" ry="10" fill="#f9b8d2" opacity="0.6"/>
+      <ellipse cx="46" cy="18" rx="7" ry="14" fill="#fde8f0" opacity="0.7"/>
+      <ellipse cx="46" cy="18" rx="3.5" ry="10" fill="#f9b8d2" opacity="0.6"/>
+      <ellipse cx="37" cy="40" rx="18" ry="16" fill="#fde8f0" opacity="0.8"/>
+      <circle cx="30" cy="37" r="3.5" fill="#e8749a" opacity="0.7"/>
+      <circle cx="44" cy="37" r="3.5" fill="#e8749a" opacity="0.7"/>
+      <ellipse cx="37" cy="43" rx="3" ry="2" fill="#f06292" opacity="0.6"/>
+      <ellipse cx="37" cy="60" rx="15" ry="12" fill="#fde8f0" opacity="0.7"/>
+      <circle cx="52" cy="65" r="6" fill="white" opacity="0.6"/>
+    </svg>
+  </div>
+</section>
+
+<!-- ── ABOUT ── -->
+<section id="about">
+  <div class="section-inner">
+    <div class="section-label reveal">About me</div>
+    <h2 class="section-title reveal">A little bit about <em>me</em></h2>
+    <div class="about-grid">
+      <div class="about-avatar reveal">
+        <div class="avatar-bg">
+          <!-- cute illustrated avatar placeholder -->
+          <svg viewBox="0 0 160 160" fill="none">
+            <circle cx="80" cy="60" r="34" fill="#f9b8d2"/>
+            <!-- hair -->
+            <ellipse cx="80" cy="42" rx="34" ry="18" fill="#8b5e3c"/>
+            <ellipse cx="52" cy="58" rx="8" ry="20" fill="#8b5e3c"/>
+            <ellipse cx="108" cy="58" rx="8" ry="20" fill="#8b5e3c"/>
+            <!-- face -->
+            <circle cx="80" cy="62" r="30" fill="#fddfc4"/>
+            <!-- eyes -->
+            <circle cx="70" cy="60" r="4" fill="#5a3820"/>
+            <circle cx="90" cy="60" r="4" fill="#5a3820"/>
+            <circle cx="71.5" cy="58.5" r="1.5" fill="white"/>
+            <circle cx="91.5" cy="58.5" r="1.5" fill="white"/>
+            <!-- blush -->
+            <ellipse cx="64" cy="68" rx="6" ry="3.5" fill="#f9b8d2" opacity="0.6"/>
+            <ellipse cx="96" cy="68" rx="6" ry="3.5" fill="#f9b8d2" opacity="0.6"/>
+            <!-- smile -->
+            <path d="M72 72 Q80 80 88 72" stroke="#c0745a" stroke-width="2" stroke-linecap="round" fill="none"/>
+            <!-- nose -->
+            <ellipse cx="80" cy="68" rx="2" ry="1.5" fill="#e8a080"/>
+            <!-- body -->
+            <ellipse cx="80" cy="126" rx="38" ry="28" fill="#f9b8d2"/>
+            <!-- outfit leaf pattern -->
+            <ellipse cx="80" cy="118" rx="28" ry="20" fill="#7bc98a"/>
+            <path d="M72 108 Q80 102 88 108 Q80 118 72 108Z" fill="#5da870"/>
+            <path d="M65 115 Q73 110 78 118 Q70 122 65 115Z" fill="#5da870"/>
+            <path d="M95 115 Q87 110 82 118 Q90 122 95 115Z" fill="#5da870"/>
+          </svg>
+          <div class="avatar-badge">🌸 Kristina</div>
+        </div>
+      </div>
+      <div class="about-text reveal">
+      <p>
+          My name is <strong>Kristina Angreani</strong>, born and raised in <strong>Cengkareng, Jakarta Barat</strong> 🇮🇩. I am a vocational high school graduate from Taiwan 🇹🇼 and I am actively looking for my next opportunity!
+        </p>
+        <p>
+          I studied at <strong>永平工商 (Yongping Vocational High School)</strong>, Bakery Department — where I built real hands-on skills in bread-making and professional kitchen environments. I also gained hospitality experience working as a <strong>Waiter at Sheraton Hsinchu Hotel</strong> and as a <strong>Bread Maker at 手貸坊</strong>.
+        </p>
+      <p>
+          I am a fast learner, responsible, and love working in a team. I enjoy adapting to new environments and I am <strong>ready to start work right away</strong>. Mandarin is a key part of my daily life in Taiwan and one of my biggest assets. 🌿
+        </p>
+        <div class="about-flags">
+          <div class="flag-chip">📞 +62 821-1366-4675</div>
+          <div class="flag-chip">🇮🇩 Jakarta Barat</div>
+          <div class="flag-chip">🇹🇼 Taiwan Graduate</div>
+          <div class="flag-chip">🍞 Baker</div>
+          <div class="flag-chip">🏨 Hospitality</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── MANDARIN HIGHLIGHT ── -->
+<section id="mandarin-section">
+  <!-- floating leaf decorations -->
+  <div class="leaf-float" style="font-size:3rem;left:5%;top:20%;animation-duration:4s;">🍃</div>
+  <div class="leaf-float" style="font-size:2rem;left:15%;bottom:20%;animation-duration:5s;animation-delay:1s;">🌿</div>
+  <div class="leaf-float" style="font-size:2.5rem;right:8%;top:30%;animation-duration:3.5s;animation-delay:0.5s;">🍀</div>
+  <div class="leaf-float" style="font-size:2rem;right:20%;bottom:15%;animation-duration:4.5s;animation-delay:2s;">🌱</div>
+  <div class="mandarin-inner">
+    <div class="mandarin-label reveal">Language in Daily Life</div>
+    <div class="mandarin-big reveal">普通话</div>
+    <div class="mandarin-pinyin reveal">Pǔ tōng huà — Mandarin Chinese</div>
+    <p class="mandarin-desc reveal">
+      Living and working in Taiwan has given me the immersive experience to communicate in Mandarin every day — at Sheraton Hsinchu Hotel, in the bakery, and in school. Every day is a new step forward. 每天都在进步！
+    </p>
+    <div class="cert-chips reveal">
+      <div class="cert-chip highlight">🌿 Basic Communication</div>
+      <div class="cert-chip">每天使用 (Daily Use)</div>
+      <div class="cert-chip">正在进步 (Improving)</div>
+      <div class="cert-chip">📜 TOEFL A1</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SKILLS ── -->
+<section id="skills">
+  <div class="section-inner">
+    <div class="section-label reveal">Skills</div>
+    <h2 class="section-title reveal">What I bring to the <em>table</em></h2>
+    <div class="skills-grid">
+
+      <div class="skill-card mandarin reveal">
+        <div class="skill-icon">🗣️</div>
+        <div class="skill-name">Mandarin Communication</div>
+        <div class="skill-cn">普通话 · Pǔ tōng huà</div>
+        <div class="skill-desc">Basic Mandarin communication developed through daily life and work in Taiwan. Used actively in hotel and bakery environments with colleagues and guests.</div>
+        <div class="cert-badge">🌿 Active Daily Use · Taiwan</div>
+      </div>
+
+      <div class="skill-card baking reveal">
+        <div class="skill-icon">🥖</div>
+        <div class="skill-name">Baking & Bread Production</div>
+        <div class="skill-cn">烘焙 · Hōng bèi</div>
+        <div class="skill-desc">Trained at 永平工商 Bakery Department. Real-world experience at 手貸坊 — bread preparation, kitchen hygiene, ingredient organisation, and teamwork under pressure.</div>
+      </div>
+
+      <div class="skill-card service reveal">
+        <div class="skill-icon">🏨</div>
+        <div class="skill-name">Hotel & Restaurant Service</div>
+        <div class="skill-cn">餐厅服务 · Cāntīng fúwù</div>
+        <div class="skill-desc">Waiter experience at Sheraton Hsinchu Hotel — guest service, daily restaurant operations, maintaining cleanliness, and smooth team communication in a 5-star setting.</div>
+      </div>
+
+      <div class="skill-card kitchen reveal">
+        <div class="skill-icon">🤝</div>
+        <div class="skill-name">Teamwork & Reliability</div>
+        <div class="skill-cn">合作精神 · Hézuò jīngshén</div>
+        <div class="skill-desc">Responsible, hardworking and a fast learner. Proven ability to adapt quickly to new environments and cooperate effectively with diverse teams.
+          <div class="cert-badge" style="margin-top:8px;">📜 TOEFL A1 Certificate</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── EXPERIENCE ── -->
+<section id="experience">
+  <div class="section-inner">
+    <div class="section-label reveal">Work Experience</div>
+    <h2 class="section-title reveal">My <em>journey</em> so far</h2>
+    <div class="exp-timeline">
+
+      <div class="exp-item reveal">
+        <div class="exp-dot">🏨</div>
+        <div class="exp-card">
+          <div class="exp-title">Waiter</div>
+          <div class="exp-place">Sheraton Hsinchu Hotel · 2023 – 2026</div>
+          <div class="exp-desc">
+            Served customers and ensured excellent guest service at a 5-star international hotel. Assisted daily restaurant operations, maintained cleanliness of the working area, and communicated with team members to ensure smooth service delivery.
+          </div>
+        </div>
+      </div>
+
+      <div class="exp-item reveal">
+        <div class="exp-dot">🥖</div>
+        <div class="exp-card">
+          <div class="exp-title">Bread Maker</div>
+          <div class="exp-place">手貸坊 · September 2023 – 2024</div>
+          <div class="exp-desc">
+            Assisted in preparing bread and bakery products in a professional bakery environment. Maintained cleanliness and hygiene in the kitchen, helped organise ingredients and tools, and assisted other staff during busy hours.
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── EDUCATION ── -->
+<section id="education">
+  <div class="section-inner">
+    <div class="section-label reveal">Education</div>
+    <h2 class="section-title reveal">My <em>learning</em> path</h2>
+    <div class="edu-cards">
+
+      <div class="edu-card reveal">
+        <div class="edu-ribbon">2026</div>
+        <div class="edu-icon">🏫</div>
+        <div class="edu-school">永平工商 · Yongping Vocational High School</div>
+        <div class="edu-detail">Vocational High School, Bakery Department · Graduated 2026. Fully immersed in Taiwan, with strong practical food production skills and daily Mandarin communication.</div>
+        <div class="edu-cn">高雄縣 永平工商 · 烘焙科</div>
+      </div>
+
+      <div class="edu-card reveal">
+        <div class="edu-icon">📜</div>
+        <div class="edu-school">TOEFL A1 Certificate</div>
+        <div class="edu-detail">Certified at TOEFL A1 level in English, demonstrating foundational English communication skills alongside active Mandarin development through daily life in Taiwan.</div>
+        <div class="edu-cn">英语 TOEFL A1 证书 🌿</div>
+      </div>
+
+      <div class="edu-card reveal">
+        <div class="edu-icon">🗣️</div>
+        <div class="edu-school">Basic Mandarin Communication</div>
+        <div class="edu-detail">Developed practical Mandarin skills through immersion in Taiwan — used daily in the workplace at Sheraton Hsinchu Hotel and professional kitchen environments.</div>
+        <div class="edu-cn">基础普通话 · 台湾生活实践</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── CONTACT ── -->
+<section id="contact">
+  <div class="section-inner">
+    <div class="section-label reveal">Contact</div>
+    <h2 class="section-title reveal">Let's <em>connect</em></h2>
+    <div class="contact-card reveal">
+      <h3>Say hello! 🌸</h3>
+      <p>I am actively seeking opportunities in hospitality, food service, bakery, and roles where Mandarin language skills are an advantage. Available to start now — feel free to reach out!</p>
+      <div class="contact-links">
+        <a class="contact-link" href="mailto:kristinaangreani@gmail.com">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#e8749a" stroke-width="2" stroke-linecap="round"><rect x="2" y="4" width="20" height="16" rx="3"/><path d="m2 7 10 7 10-7"/></svg>
+          <span class="__cf_email__" data-cfemail="660d140f15120f0807070801140307080f26010b070f0a4805090b">kristinaangreani@gmail.com</span>
+        </a>
+        <a class="contact-link" href="tel:+6282113664675">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#e8749a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.63 3.4 2 2 0 0 1 3.6 1.21h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.77a16 16 0 0 0 6.29 6.29l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          +62 821-1366-4675
+        </a>
+        <a class="contact-link" href="https://linkedin.com/in/kristinaangreani" target="_blank">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="#0a66c2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2zM4 6a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"/></svg>
+          LinkedIn
+        </a>
+        <a class="contact-link" href="#">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#e8749a" stroke-width="2" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Cengkareng, Jakarta Barat
+        </a>
+      </div>
+      <div class="contact-bunny">🐰</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  Made with <span>🌸</span> & <span>🌿</span> — Kristina Angreani © 2025
+</footer>
+
+<!-- ── TWEAKS PANEL ── -->
+<div id="tweaks-panel">
+  <h4>🎨 Tweaks</h4>
+  <div class="tweak-row">
+    <label>Pink Tone</label>
+    <input type="color" id="tweak-pink" value="#e8749a">
+  </div>
+  <div class="tweak-row">
+    <label>Green Tone</label>
+    <input type="color" id="tweak-green" value="#7bc98a">
+  </div>
+  <div class="tweak-row">
+    <label>Petal Density</label>
+    <input type="range" id="tweak-petals" min="0" max="30" value="12">
+  </div>
+  <div class="tweak-row">
+    <label>Font Style</label>
+    <select id="tweak-font">
+      <option value="'Comfortaa', cursive">Comfortaa (cute)</option>
+      <option value="'Quicksand', sans-serif">Quicksand</option>
+      <option value="'Nunito', sans-serif">Nunito</option>
+    </select>
+  </div>
+</div>
+
+<script>
+// ─── TWEAKS PROTOCOL ───
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "pinkColor": "#e88cab",
+  "greenColor": "#7bc98a",
+  "petalCount": 12,
+  "fontStyle": "'Comfortaa', cursive"
+}/*EDITMODE-END*/;
+
+let tweaks = { ...TWEAK_DEFAULTS };
+
+function applyTweaks(t) {
+  document.documentElement.style.setProperty('--pink-strong', t.pinkColor);
+  document.documentElement.style.setProperty('--green-mid', t.greenColor);
+  document.body.style.fontFamily = t.fontStyle;
+}
+applyTweaks(tweaks);
+
+window.addEventListener('message', e => {
+  if (e.data?.type === '__activate_edit_mode') {
+    document.getElementById('tweaks-panel').style.display = 'block';
+  } else if (e.data?.type === '__deactivate_edit_mode') {
+    document.getElementById('tweaks-panel').style.display = 'none';
+  }
+});
+window.parent.postMessage({ type: '__edit_mode_available' }, '*');
+
+document.getElementById('tweak-pink').addEventListener('input', e => {
+  tweaks.pinkColor = e.target.value;
+  applyTweaks(tweaks);
+  window.parent.postMessage({ type: '__edit_mode_set_keys', edits: { pinkColor: tweaks.pinkColor } }, '*');
+});
+document.getElementById('tweak-green').addEventListener('input', e => {
+  tweaks.greenColor = e.target.value;
+  applyTweaks(tweaks);
+  window.parent.postMessage({ type: '__edit_mode_set_keys', edits: { greenColor: tweaks.greenColor } }, '*');
+});
+document.getElementById('tweak-font').addEventListener('change', e => {
+  tweaks.fontStyle = e.target.value;
+  applyTweaks(tweaks);
+  window.parent.postMessage({ type: '__edit_mode_set_keys', edits: { fontStyle: tweaks.fontStyle } }, '*');
+});
+
+// ─── PETALS ───
+function createPetals(count) {
+  const container = document.getElementById('petals');
+  container.innerHTML = '';
+  const petalShapes = ['🌸','🌺','🍃','🌿','🌸','🌼'];
+  for (let i = 0; i < count; i++) {
+    const p = document.createElement('div');
+    p.className = 'petal';
+    p.textContent = petalShapes[Math.floor(Math.random() * petalShapes.length)];
+    p.style.left = Math.random() * 100 + 'vw';
+    p.style.fontSize = (Math.random() * 14 + 10) + 'px';
+    p.style.animationDuration = (Math.random() * 8 + 6) + 's';
+    p.style.animationDelay = (Math.random() * 10) + 's';
+    container.appendChild(p);
+  }
+}
+createPetals(tweaks.petalCount);
+
+document.getElementById('tweak-petals').addEventListener('input', e => {
+  tweaks.petalCount = parseInt(e.target.value);
+  createPetals(tweaks.petalCount);
+});
+
+// ─── LOADING ANIMATION ───
+const loader = document.getElementById('loader');
+const fill = document.getElementById('progress-fill');
+const bunny = document.getElementById('bunny-wrap');
+const loaderText = document.getElementById('loader-text');
+const track = document.getElementById('track');
+const nav = document.querySelector('nav');
+const navToggle = document.querySelector('.nav-toggle');
+const navLinks = document.querySelectorAll('.nav-menu a');
+
+function closeMobileNav() {
+  nav.classList.remove('nav-open');
+  navToggle.setAttribute('aria-expanded', 'false');
+}
+
+navToggle.addEventListener('click', () => {
+  const isOpen = nav.classList.toggle('nav-open');
+  navToggle.setAttribute('aria-expanded', String(isOpen));
+});
+
+navLinks.forEach(link => {
+  link.addEventListener('click', () => {
+    if (window.innerWidth <= 680) closeMobileNav();
+  });
+});
+
+window.addEventListener('resize', () => {
+  if (window.innerWidth > 680) closeMobileNav();
+});
+
+const messages = [
+  'Bunny is hopping… 🐰',
+  'Almost at the carrot! 🥕',
+  'Loading the good stuff… 🌸',
+  'Ready to bloom! 🌺'
+];
+let prog = 0;
+let msgIdx = 0;
+
+const interval = setInterval(() => {
+  prog += Math.random() * 4 + 2;
+  if (prog > 100) prog = 100;
+
+  fill.style.width = prog + '%';
+  // move bunny along track (from ~4px to ~268px)
+  const trackW = track.offsetWidth - 58; // subtract bunny+carrot widths
+  bunny.style.left = (4 + (trackW * prog / 100)) + 'px';
+
+  if (prog >= 25 * (msgIdx + 1) && msgIdx < messages.length - 1) {
+    msgIdx++;
+    loaderText.textContent = messages[msgIdx];
+  }
+
+  if (prog >= 100) {
+    clearInterval(interval);
+    setTimeout(() => {
+      gsap.to(loader, { opacity: 0, duration: 0.7, onComplete: () => {
+        loader.style.display = 'none';
+        initPage();
+      }});
+    }, 400);
+  }
+}, 60);
+
+// ─── PAGE INIT & SCROLL REVEALS ───
+function initPage() {
+  gsap.registerPlugin(ScrollTrigger);
+
+  // hero stagger
+  gsap.from('.hero-tag', { opacity: 0, y: 30, duration: 0.7, delay: 0.1 });
+  gsap.from('.hero-name', { opacity: 0, y: 40, duration: 0.8, delay: 0.25 });
+  gsap.from('.hero-cn',   { opacity: 0, y: 25, duration: 0.7, delay: 0.45 });
+  gsap.from('.hero-subtitle', { opacity: 0, y: 20, duration: 0.7, delay: 0.6 });
+  gsap.from('.btn-primary', { opacity: 0, y: 20, duration: 0.6, delay: 0.75 });
+  gsap.from('.hero-bunny', { opacity: 0, x: 40, duration: 0.8, delay: 1 });
+
+  // scroll reveals
+  document.querySelectorAll('.reveal').forEach(el => {
+    // skip hero elements already animated
+    if (el.closest('#hero')) return;
+    gsap.fromTo(el,
+      { opacity: 0, y: 36 },
+      {
+        opacity: 1, y: 0,
+        duration: 0.7,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: el,
+          start: 'top 88%',
+          toggleActions: 'play none none none'
+        }
+      }
+    );
+  });
+}
+</script>
+</body>
+</html>
